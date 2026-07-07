@@ -1,14 +1,20 @@
 type HashMapElement = [string, any];
 class HashMap {
 	private bucket: HashMapElement[][] = [];
-	private hash(key: string): number {
-		let hashString: number = 0;
-		for (let c of key) hashString += c.charCodeAt(0);
-		return hashString;
+	private hash(str: string): number {
+		let hash = 0x811c9dc5;
+		for (let i = 0; i < str.length; i++) {
+			hash ^= str.charCodeAt(i);
+			hash = Math.imul(hash, 0x01000193);
+		}
+		return (hash >>> 0) & 1023;
 	}
 	public set(key: string, value: any): void {
 		const bucketKey = this.hash(key);
 		if (!Array.isArray(this.bucket[bucketKey])) this.bucket[bucketKey] = [];
+		this.bucket[bucketKey] = this.bucket[bucketKey].filter(
+			localKey => localKey[0] === key
+		);
 		this.bucket[bucketKey].push([key, value]);
 	}
 	public get(key: string): HashMapElement | undefined {
