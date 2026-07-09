@@ -4,15 +4,13 @@ const user = {
 	skills: ['js', 'ts']
 };
 
-function pickObjectKeys<T extends Object, K extends keyof T>(
-	obj: T,
-	keys: K[]
-): Object {
+function pickObjectKeys<
+	T extends Record<PropertyKey, unknown>,
+	K extends keyof T
+>(obj: T, keys: K[]): Pick<T, K> {
 	return Object.fromEntries(
-		Object.entries(obj).filter((entry: [string, any]) =>
-			keys.includes(entry[0] as K)
-		)
-	);
+		Object.entries(obj).filter(([key]) => keys.includes(key as K))
+	) as Pick<T, K>;
 }
 
 const res = pickObjectKeys(user, ['age', 'skills']);
